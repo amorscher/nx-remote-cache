@@ -32,6 +32,9 @@ jobs:
           override: true
           components: clippy, rustfmt
 
+      - name: Install Redis CLI (optional, pre-installed on Ubuntu)
+        run: sudo apt-get update && sudo apt-get install -y redis-tools
+      
       - name: Verify Redis is up
         run: redis-cli -h localhost ping
 
