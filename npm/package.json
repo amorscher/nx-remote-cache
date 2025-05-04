@@ -1,0 +1,17 @@
+{
+    "name": "nx-cache-server",
+    "version": "1.0.0",
+    "description": "Nx custom remote cache server backed by Redis",
+    "bin": {
+      "nx-cache-server": "./index.js"
+    },
+    "scripts": {
+      "start": "node index.js"
+    },
+    "files": [
+        "index.js",
+        "bin/"
+      ],
+    "author": "Ambros Morscher",
+    "license": "MIT"
+  }
