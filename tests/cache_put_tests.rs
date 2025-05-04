@@ -44,7 +44,7 @@ async fn test_multiple_put_cache() {
     // Upload data via PUT
     let req = Request::builder()
         .method("PUT")
-        .uri(format!("/v1/cache/http-integration-key"))
+        .uri("/v1/cache/http-integration-key")
         .header("Content-Length", test_data.len())
         .body(Body::from(test_data.clone()))
         .unwrap();
@@ -52,7 +52,7 @@ async fn test_multiple_put_cache() {
 
     let req = Request::builder()
         .method("PUT")
-        .uri(format!("/v1/cache/http-integration-key-1"))
+        .uri("/v1/cache/http-integration-key-1")
         .header("Content-Length", test_data.len())
         .body(Body::from(test_data.clone()))
         .unwrap();
@@ -74,7 +74,7 @@ async fn test_put_same_item_results_in_error() {
     // Upload data via PUT
     let req = Request::builder()
         .method("PUT")
-        .uri(format!("/v1/cache/http-integration-key"))
+        .uri("/v1/cache/http-integration-key")
         .header("Content-Length", test_data.len())
         .body(Body::from(test_data.clone()))
         .unwrap();
@@ -82,7 +82,7 @@ async fn test_put_same_item_results_in_error() {
 
     let req = Request::builder()
         .method("PUT")
-        .uri(format!("/v1/cache/http-integration-key"))
+        .uri("/v1/cache/http-integration-key")
         .header("Content-Length", test_data.len())
         .body(Body::from(test_data.clone()))
         .unwrap();

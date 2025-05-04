@@ -5,7 +5,7 @@ use axum::{
 use hyper::StatusCode;
 mod test_utils;
 
-use test_utils::{create_test_app, create_test_app_with_url, setup};
+use test_utils::{create_test_app, setup};
 use tower::ServiceExt;
 
 #[tokio::test]

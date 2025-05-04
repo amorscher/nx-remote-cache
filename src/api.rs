@@ -68,6 +68,6 @@ async fn put_cache(
         Ok(_) => StatusCode::ACCEPTED.into_response(),
         Err(e) =>{ 
             println!("Error setting file in cache: {}", e);
-            return StatusCode::INTERNAL_SERVER_ERROR.into_response()},
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()},
     }
 }

@@ -60,9 +60,9 @@ impl RemoteCache for RedisFileCache {
 
     async fn set_file(&self, key: &str, data: &[u8], ttl: Option<usize>) -> Result<(), String> {
         let mut con = self.con.lock().await;
-        con.set(key, data).await.map_err(|e| e.to_string())?;
+        con.set::<_, _, ()>(key, data).await.map_err(|e| e.to_string())?;
         if let Some(ttl_secs) = ttl {
-            con.expire(key, ttl_secs as i64)
+            con.expire::<_, ()>(key, ttl_secs as i64)
                 .await
                 .map_err(|e| e.to_string())?;
         }
