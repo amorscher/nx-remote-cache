@@ -38,7 +38,6 @@ async fn test_basic_get_from_cache() {
 
     let response = app.oneshot(req).await.unwrap();
 
-
     //THEN
     assert_eq!(response.status(), StatusCode::OK);
 
@@ -47,7 +46,6 @@ async fn test_basic_get_from_cache() {
         .unwrap();
     assert_eq!(body_bytes, test_data);
 }
-
 
 #[tokio::test]
 async fn test_item_cannot_be_found_in_cache() {
@@ -67,10 +65,8 @@ async fn test_item_cannot_be_found_in_cache() {
 
     let response = app.oneshot(req).await.unwrap();
 
-
     //THEN
     assert_eq!(response.status(), StatusCode::NOT_FOUND);
-
 }
 
 // #[tokio::test]
@@ -90,7 +86,6 @@ async fn test_item_cannot_be_found_in_cache() {
 //         .unwrap();
 
 //     let response = app.oneshot(req).await.unwrap();
-
 
 //     //THEN
 //     assert_eq!(response.status(), StatusCode::NOT_FOUND);

@@ -1,9 +1,6 @@
 use crate::remote_cache::RemoteCache;
 use async_trait::async_trait;
-use redis::{
-    aio:: MultiplexedConnection,
-    AsyncCommands, Client,
-};
+use redis::{aio::MultiplexedConnection, AsyncCommands, Client};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -13,7 +10,7 @@ pub struct RedisFileCache {
 }
 
 impl RedisFileCache {
-    pub async fn new(redis_url:&str) -> Self {
+    pub async fn new(redis_url: &str) -> Self {
         let client = Client::open(redis_url).unwrap();
         let con = client.get_multiplexed_async_connection().await.unwrap();
 
@@ -21,8 +18,6 @@ impl RedisFileCache {
             con: Arc::new(Mutex::new(con)),
         }
     }
-
-
 }
 
 #[async_trait]
@@ -60,7 +55,9 @@ impl RemoteCache for RedisFileCache {
 
     async fn set_file(&self, key: &str, data: &[u8], ttl: Option<usize>) -> Result<(), String> {
         let mut con = self.con.lock().await;
-        con.set::<_, _, ()>(key, data).await.map_err(|e| e.to_string())?;
+        con.set::<_, _, ()>(key, data)
+            .await
+            .map_err(|e| e.to_string())?;
         if let Some(ttl_secs) = ttl {
             con.expire::<_, ()>(key, ttl_secs as i64)
                 .await

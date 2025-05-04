@@ -1,14 +1,16 @@
 use std::sync::Arc;
 
 use axum::{
-    body::{to_bytes, Body}, extract::{ Path, State}, http::{HeaderMap, Request, StatusCode}, response::{IntoResponse, Response}, routing::get, Router
+    body::{to_bytes, Body},
+    extract::{Path, State},
+    http::{HeaderMap, Request, StatusCode},
+    response::{IntoResponse, Response},
+    routing::get,
+    Router,
 };
 use tower_http::auth::AddAuthorizationLayer;
 
 use crate::remote_cache::RemoteCache;
-
-
-
 
 #[derive(Clone)]
 pub struct AppState {
@@ -16,11 +18,11 @@ pub struct AppState {
     pub ttl: Option<usize>,
 }
 
-pub fn create_router(state:AppState) -> Router {
+pub fn create_router(state: AppState) -> Router {
     Router::new()
-    .route("/v1/cache/{hash}", get(get_cache).put(put_cache))
-    .layer(AddAuthorizationLayer::bearer("your-secret-token"))
-    .with_state(state)
+        .route("/v1/cache/{hash}", get(get_cache).put(put_cache))
+        .layer(AddAuthorizationLayer::bearer("your-secret-token"))
+        .with_state(state)
 }
 
 async fn get_cache(Path(hash): Path<String>, State(state): State<AppState>) -> Response {
@@ -56,18 +58,19 @@ async fn put_cache(
         return StatusCode::CONFLICT.into_response();
     }
 
-    let body = match to_bytes(request.into_body(),60000000000000000).await {
+    let body = match to_bytes(request.into_body(), 60000000000000000).await {
         Ok(b) => b,
-        Err(e) =>{ 
+        Err(e) => {
             println!("Error setting file in cache: {}", e);
-            return StatusCode::INTERNAL_SERVER_ERROR.into_response()},
-    
+            return StatusCode::INTERNAL_SERVER_ERROR.into_response();
+        }
     };
 
     match state.cache.set_file(&hash, &body, state.ttl).await {
         Ok(_) => StatusCode::ACCEPTED.into_response(),
-        Err(e) =>{ 
+        Err(e) => {
             println!("Error setting file in cache: {}", e);
-            StatusCode::INTERNAL_SERVER_ERROR.into_response()},
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
     }
 }

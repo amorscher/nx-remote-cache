@@ -1,4 +1,7 @@
-use std::{ process::{Command, Stdio}, sync::Arc};
+use std::{
+    process::{Command, Stdio},
+    sync::Arc,
+};
 
 use axum::Router;
 use nx_remote_cache::{
@@ -6,7 +9,6 @@ use nx_remote_cache::{
     remote_cache_redis::RedisFileCache,
 };
 use once_cell::sync::OnceCell;
-
 
 pub async fn create_test_app() -> Router {
     create_test_app_with_url("redis://localhost:6379").await
@@ -23,7 +25,6 @@ pub async fn create_test_app_with_url(url: &str) -> Router {
     // Build the Axum app
     create_router(state)
 }
-
 
 static INIT: OnceCell<()> = OnceCell::new();
 
@@ -45,7 +46,7 @@ pub fn setup() {
                 .stderr(Stdio::inherit())
                 .status()
                 .expect("Failed to run redis-cli FLUSHALL");
-    
+
             assert!(flush_status.success(), "FLUSHALL failed");
         } else {
             println!("🔧 Not in CI – starting Redis locally...");

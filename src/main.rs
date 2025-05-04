@@ -2,15 +2,11 @@ use api::{create_router, AppState};
 
 use std::{env, net::SocketAddr, sync::Arc};
 
-
-mod remote_cache_redis;
-mod remote_cache;
 mod api;
-
+mod remote_cache;
+mod remote_cache_redis;
 
 use remote_cache_redis::RedisFileCache;
-
-
 
 #[tokio::main]
 async fn main() {
@@ -27,8 +23,8 @@ async fn main() {
     let app = create_router(state);
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     println!("Listening on {}", addr);
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+        .await
+        .unwrap();
     axum::serve(listener, app).await.unwrap();
 }
-
-
