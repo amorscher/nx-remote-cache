@@ -23,6 +23,7 @@ impl RedisFileCache {
 
 #[async_trait]
 impl RemoteCache for RedisFileCache {
+    
     async fn file_exists(&self, key: &str) -> bool {
         let mut con = self.con.lock().await;
         con.exists(key).await.unwrap_or(false)
@@ -30,34 +31,23 @@ impl RemoteCache for RedisFileCache {
 
     async fn get_file(&self, key: &str) -> Result<Option<Vec<u8>>> {
         let mut con = self.con.lock().await;
-        // if self.file_exists(key).await {
-        //     println!("File exists in Redis");
-        // } else {
-        //     println!("File does not exist in Redis");
-        // }
-        let data = con
-            .get::<_, Vec<u8>>(key)
+        let data: Option<Vec<u8>> = con
+            .get(key)
             .await
             .with_context(|| "Error getting file from Redis.".to_string())?;
 
-        println!("Got file from Redis: {}", data.len());
-
-        if data.is_empty() {
-            return Ok(None);
+        if let Some(ref d) = data {
+            println!("Got file from Redis: {} bytes", d.len());
         }
 
-        Ok(Some(data))
-
-        // con.get(key).await.ok()
+        Ok(data)
     }
 
     async fn set_file(&self, key: &str, data: &[u8], ttl: Option<usize>) -> Result<()> {
         let mut con = self.con.lock().await;
-        con.set::<_, _, ()>(key, data)
-            .await?;
+        con.set::<_, _, ()>(key, data).await?;
         if let Some(ttl_secs) = ttl {
-            con.expire::<_, ()>(key, ttl_secs as i64)
-                .await?;
+            con.expire::<_, ()>(key, ttl_secs as i64).await?;
         }
         Ok(())
     }
