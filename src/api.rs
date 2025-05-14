@@ -27,15 +27,25 @@ pub fn create_router(state: AppState) -> Router {
 
 async fn get_cache(Path(hash): Path<String>, State(state): State<AppState>) -> Response {
     println!("Getting cache for hash: {}", hash);
-    match state.cache.get_file(&hash).await {
-        Some(data) => (
-            StatusCode::OK,
-            [("Content-Type", "application/octet-stream")],
-            data,
-        )
-            .into_response(),
-        None => StatusCode::NOT_FOUND.into_response(),
+    let result = state.cache.get_file(&hash).await;
+    match result {
+        Ok(data) => {
+            match data {
+                Some(data) => (
+                    StatusCode::OK,
+                    [("Content-Type", "application/octet-stream")],
+                    data,
+                )
+                    .into_response(),
+                None => StatusCode::NOT_FOUND.into_response(),
+            }
+        }
+        Err(e) => {
+            println!("Error getting file from cache: {}", e);
+            return StatusCode::INTERNAL_SERVER_ERROR.into_response();
+        }
     }
+    
 }
 
 async fn put_cache(
