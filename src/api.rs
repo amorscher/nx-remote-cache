@@ -3,7 +3,7 @@ use std::sync::Arc;
 use axum::{
     body::{to_bytes, Body},
     extract::{Path, State},
-    http::{HeaderMap, Request, StatusCode},
+    http::{HeaderMap,header, Request, StatusCode},
     response::{IntoResponse, Response},
     routing::get,
     Router,
@@ -42,10 +42,22 @@ async fn get_cache(Path(hash): Path<String>, State(state): State<AppState>) -> R
         }
         Err(e) => {
             println!("Error getting file from cache: {}", e);
-            return StatusCode::INTERNAL_SERVER_ERROR.into_response();
+            internal_error_response(e).into_response()
         }
     }
     
+}
+
+/// Helper function to create an internal error response
+/// with a custom message and headers.
+/// This function is used to create a consistent error response
+/// format for internal server errors.
+fn internal_error_response(err: impl std::fmt::Display) -> impl IntoResponse {
+    let mut headers = HeaderMap::new();
+    headers.insert(header::CONTENT_TYPE, "text/plain".parse().unwrap());
+
+    let body = format!("Internal Server Error: {}", err);
+    (StatusCode::INTERNAL_SERVER_ERROR, headers, Body::from(body))
 }
 
 async fn put_cache(
@@ -72,7 +84,7 @@ async fn put_cache(
         Ok(b) => b,
         Err(e) => {
             println!("Error setting file in cache: {}", e);
-            return StatusCode::INTERNAL_SERVER_ERROR.into_response();
+            return internal_error_response(e).into_response();
         }
     };
 
@@ -80,7 +92,7 @@ async fn put_cache(
         Ok(_) => StatusCode::ACCEPTED.into_response(),
         Err(e) => {
             println!("Error setting file in cache: {}", e);
-            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+            internal_error_response(e).into_response()
         }
     }
 }
