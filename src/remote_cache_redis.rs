@@ -23,7 +23,6 @@ impl RedisFileCache {
 
 #[async_trait]
 impl RemoteCache for RedisFileCache {
-    
     async fn file_exists(&self, key: &str) -> bool {
         let mut con = self.con.lock().await;
         con.exists(key).await.unwrap_or(false)

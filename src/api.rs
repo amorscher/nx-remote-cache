@@ -3,7 +3,7 @@ use std::sync::Arc;
 use axum::{
     body::{to_bytes, Body},
     extract::{Path, State},
-    http::{HeaderMap,header, Request, StatusCode},
+    http::{header, HeaderMap, Request, StatusCode},
     response::{IntoResponse, Response},
     routing::get,
     Router,
@@ -29,23 +29,20 @@ async fn get_cache(Path(hash): Path<String>, State(state): State<AppState>) -> R
     println!("Getting cache for hash: {}", hash);
     let result = state.cache.get_file(&hash).await;
     match result {
-        Ok(data) => {
-            match data {
-                Some(data) => (
-                    StatusCode::OK,
-                    [("Content-Type", "application/octet-stream")],
-                    data,
-                )
-                    .into_response(),
-                None => StatusCode::NOT_FOUND.into_response(),
-            }
-        }
+        Ok(data) => match data {
+            Some(data) => (
+                StatusCode::OK,
+                [("Content-Type", "application/octet-stream")],
+                data,
+            )
+                .into_response(),
+            None => StatusCode::NOT_FOUND.into_response(),
+        },
         Err(e) => {
             println!("Error getting file from cache: {}", e);
             internal_error_response(e).into_response()
         }
     }
-    
 }
 
 /// Helper function to create an internal error response
