@@ -12,6 +12,7 @@ redis = { version = "0.25", features = ["tokio-comp"] }
 tower-http = { version = "0.5", features = ["auth"] }
 async-trait = "0.1"
 hyper-util = "0.1.11"
+anyhow = "=1.0.64"
 
 [dev-dependencies]
 mockall = "0.12"

@@ -1,4 +1,5 @@
 use crate::remote_cache::RemoteCache;
+use anyhow::{Context, Result};
 use async_trait::async_trait;
 use redis::{aio::MultiplexedConnection, AsyncCommands, Client};
 use std::sync::Arc;
@@ -27,41 +28,25 @@ impl RemoteCache for RedisFileCache {
         con.exists(key).await.unwrap_or(false)
     }
 
-    async fn get_file(&self, key: &str) -> Option<Vec<u8>> {
+    async fn get_file(&self, key: &str) -> Result<Option<Vec<u8>>> {
         let mut con = self.con.lock().await;
-        // if self.file_exists(key).await {
-        //     println!("File exists in Redis");
-        // } else {
-        //     println!("File does not exist in Redis");
-        // }
-        let result = match con.get::<_, Vec<u8>>(key).await {
-            Ok(data) => {
-                println!("Got file from Redis: {}", data.len());
-                if data.is_empty() {
-                    None
-                } else {
-                    Some(data)
-                }
-            }
-            Err(err) => {
-                eprintln!("Error getting file from Redis: {}", err);
-                None
-            }
-        };
+        let data: Option<Vec<u8>> = con
+            .get(key)
+            .await
+            .with_context(|| "Error getting file from Redis.".to_string())?;
 
-        return result;
-        // con.get(key).await.ok()
+        if let Some(ref d) = data {
+            println!("Got file from Redis: {} bytes", d.len());
+        }
+
+        Ok(data)
     }
 
-    async fn set_file(&self, key: &str, data: &[u8], ttl: Option<usize>) -> Result<(), String> {
+    async fn set_file(&self, key: &str, data: &[u8], ttl: Option<usize>) -> Result<()> {
         let mut con = self.con.lock().await;
-        con.set::<_, _, ()>(key, data)
-            .await
-            .map_err(|e| e.to_string())?;
+        con.set::<_, _, ()>(key, data).await?;
         if let Some(ttl_secs) = ttl {
-            con.expire::<_, ()>(key, ttl_secs as i64)
-                .await
-                .map_err(|e| e.to_string())?;
+            con.expire::<_, ()>(key, ttl_secs as i64).await?;
         }
         Ok(())
     }

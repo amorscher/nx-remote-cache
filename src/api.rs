@@ -3,7 +3,7 @@ use std::sync::Arc;
 use axum::{
     body::{to_bytes, Body},
     extract::{Path, State},
-    http::{HeaderMap, Request, StatusCode},
+    http::{header, HeaderMap, Request, StatusCode},
     response::{IntoResponse, Response},
     routing::get,
     Router,
@@ -27,15 +27,34 @@ pub fn create_router(state: AppState) -> Router {
 
 async fn get_cache(Path(hash): Path<String>, State(state): State<AppState>) -> Response {
     println!("Getting cache for hash: {}", hash);
-    match state.cache.get_file(&hash).await {
-        Some(data) => (
-            StatusCode::OK,
-            [("Content-Type", "application/octet-stream")],
-            data,
-        )
-            .into_response(),
-        None => StatusCode::NOT_FOUND.into_response(),
+    let result = state.cache.get_file(&hash).await;
+    match result {
+        Ok(data) => match data {
+            Some(data) => (
+                StatusCode::OK,
+                [("Content-Type", "application/octet-stream")],
+                data,
+            )
+                .into_response(),
+            None => StatusCode::NOT_FOUND.into_response(),
+        },
+        Err(e) => {
+            println!("Error getting file from cache: {}", e);
+            internal_error_response(e).into_response()
+        }
     }
+}
+
+/// Helper function to create an internal error response
+/// with a custom message and headers.
+/// This function is used to create a consistent error response
+/// format for internal server errors.
+fn internal_error_response(err: impl std::fmt::Display) -> impl IntoResponse {
+    let mut headers = HeaderMap::new();
+    headers.insert(header::CONTENT_TYPE, "text/plain".parse().unwrap());
+
+    let body = format!("Internal Server Error: {}", err);
+    (StatusCode::INTERNAL_SERVER_ERROR, headers, Body::from(body))
 }
 
 async fn put_cache(
@@ -62,7 +81,7 @@ async fn put_cache(
         Ok(b) => b,
         Err(e) => {
             println!("Error setting file in cache: {}", e);
-            return StatusCode::INTERNAL_SERVER_ERROR.into_response();
+            return internal_error_response(e).into_response();
         }
     };
 
@@ -70,7 +89,7 @@ async fn put_cache(
         Ok(_) => StatusCode::ACCEPTED.into_response(),
         Err(e) => {
             println!("Error setting file in cache: {}", e);
-            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+            internal_error_response(e).into_response()
         }
     }
 }
