@@ -7,9 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  build-test:
+  build-linux:
     runs-on: ubuntu-latest
-
     services:
       redis:
         image: redis
@@ -20,35 +19,108 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
           components: clippy, rustfmt
-
-      - name: Install Redis CLI (optional, pre-installed on Ubuntu)
+      - name: Install Redis CLI
         run: sudo apt-get update && sudo apt-get install -y redis-tools
-      
       - name: Verify Redis is up
         run: redis-cli -h localhost ping
-
       - name: Flush Redis before tests
         run: redis-cli -h localhost FLUSHALL
-
       - name: Run Clippy (linter)
         run: cargo clippy --all-targets --all-features -- -D warnings
-
       - name: Check formatting
         run: cargo fmt --all -- --check
-
       - name: Build project
         run: cargo build --all --release
-
       - name: Run tests
         run: cargo test --all --verbose
+      - name: Upload Linux executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: nx-cache-server-linux
+          path: target/release/nx-cache-server
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Build project
+        run: cargo build --all --release
+      - name: Upload Windows executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: nx-cache-server-win
+          path: target/release/nx-cache-server.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Build project
+        run: cargo build --all --release
+      - name: Upload macOS executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: nx-cache-server-mac
+          path: target/release/nx-cache-server
+
+  package-npm:
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-windows, build-macos]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download Linux executable
+        uses: actions/download-artifact@v3
+        with:
+          name: nx-cache-server-linux
+          path: ./npm/bin/linux
+
+      - name: Download Windows executable
+        uses: actions/download-artifact@v3
+        with:
+          name: nx-cache-server-win
+          path: ./npm/bin/win
+
+      - name: Download macOS executable
+        uses: actions/download-artifact@v3
+        with:
+          name: nx-cache-server-mac
+          path: ./npm/bin/mac
+
+      - name: Ensure permissions for Linux/macOS binaries
+        run: |
+          chmod +x ./npm/bin/linux/nx-cache-server || true
+          chmod +x ./npm/bin/mac/nx-cache-server || true
+
+      - name: Pack npm package
+        run: |
+          cd npm
+          npm pack
+
+      - name: Archive npm package
+        uses: actions/upload-artifact@v3
+        with:
+          name: npm-package
+          path: npm/*.tgz
