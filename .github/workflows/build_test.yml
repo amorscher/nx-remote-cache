@@ -43,7 +43,7 @@ jobs:
       - name: Run tests
         run: cargo test --all --verbose
       - name: Upload Linux executable
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nx-cache-server-linux
           path: target/release/nx-cache-server
@@ -61,7 +61,7 @@ jobs:
       - name: Build project
         run: cargo build --all --release
       - name: Upload Windows executable
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nx-cache-server-win
           path: target/release/nx-cache-server.exe
@@ -79,7 +79,7 @@ jobs:
       - name: Build project
         run: cargo build --all --release
       - name: Upload macOS executable
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nx-cache-server-mac
           path: target/release/nx-cache-server
@@ -92,19 +92,19 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download Linux executable
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: nx-cache-server-linux
           path: ./npm/bin/linux
 
       - name: Download Windows executable
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: nx-cache-server-win
           path: ./npm/bin/win
 
       - name: Download macOS executable
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: nx-cache-server-mac
           path: ./npm/bin/mac
