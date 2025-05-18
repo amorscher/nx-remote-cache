@@ -1,15 +1,27 @@
 use api::{create_router, AppState};
+use tracing_subscriber::EnvFilter;
 
 use std::{env, net::SocketAddr, sync::Arc};
 
 mod api;
 mod remote_cache;
 mod remote_cache_redis;
+mod utils;
 
 use remote_cache_redis::RedisFileCache;
 
 #[tokio::main]
 async fn main() {
+    // Set up a default subscriber to log to the console.
+    tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .with_target(true)
+        .init();
+
+    //print configured log level
+    let log_level = std::env::var("RUST_LOG").unwrap_or_else(|_| "info".to_string());
+    logt!(info, "Log level: {}", log_level);
+
     //read env vars
     let params = Parameters::new_from_env();
 
@@ -22,10 +34,8 @@ async fn main() {
 
     let app = create_router(state);
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    println!("Listening on {}", addr);
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
-        .await
-        .unwrap();
+    logt!(info, "Listening on {}", addr);
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 

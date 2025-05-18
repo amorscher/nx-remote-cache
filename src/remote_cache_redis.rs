@@ -1,4 +1,4 @@
-use crate::remote_cache::RemoteCache;
+use crate::{logt, remote_cache::RemoteCache};
 use anyhow::{Context, Result};
 use async_trait::async_trait;
 use redis::{aio::MultiplexedConnection, AsyncCommands, Client};
@@ -36,7 +36,11 @@ impl RemoteCache for RedisFileCache {
             .with_context(|| "Error getting file from Redis.".to_string())?;
 
         if let Some(ref d) = data {
-            println!("Got file from Redis: {} bytes", d.len());
+            logt!(debug, "Got file from Redis: {} bytes", d.len());
+        }
+        // Log if the file is not found
+        if data.is_none() {
+            logt!(debug, "File {} not found in Redis", key);
         }
 
         Ok(data)

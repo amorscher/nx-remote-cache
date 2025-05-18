@@ -5,11 +5,22 @@ set -e
 CONTAINER_NAME="nx-cache-redis"
 REDIS_PORT=6379
 
-# Start Redis container if not already running
-if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
-  echo "Redis container is already running."
+# Check if the container exists
+if [ "$(docker ps -a -q -f name=$CONTAINER_NAME)" ]; then
+  # Container exists
+  if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
+    echo "Redis container is already running."
+  else
+    echo "Starting existing Redis container..."
+    docker start $CONTAINER_NAME
+    echo "Waiting for Redis to be ready..."
+    until docker exec $CONTAINER_NAME redis-cli PING | grep -q PONG; do
+      sleep 0.5
+    done
+  fi
 else
-  echo "Starting Redis container..."
+  # Container does not exist, create it
+  echo "Creating and starting Redis container..."
   docker run -d \
     --name $CONTAINER_NAME \
     -p $REDIS_PORT:6379 \
