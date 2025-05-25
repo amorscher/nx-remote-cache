@@ -1,9 +1,9 @@
 use api::{create_router, AppState};
-use tracing_subscriber::EnvFilter;
 
 use std::{env, net::SocketAddr, sync::Arc};
 
 mod api;
+mod logger;
 mod remote_cache;
 mod remote_cache_redis;
 mod utils;
@@ -12,11 +12,8 @@ use remote_cache_redis::RedisFileCache;
 
 #[tokio::main]
 async fn main() {
-    // Set up a default subscriber to log to the console.
-    tracing_subscriber::fmt()
-        .with_env_filter(EnvFilter::from_default_env())
-        .with_target(true)
-        .init();
+    // Set up logging to both console and file (with size limit)
+    let _guard = logger::init_logger();
 
     //print configured log level
     let log_level = std::env::var("RUST_LOG").unwrap_or_else(|_| "info".to_string());
