@@ -114,6 +114,9 @@ jobs:
           chmod +x ./npm/bin/linux/nx-cache-server || true
           chmod +x ./npm/bin/mac/nx-cache-server || true
 
+      - name: Copy README.md to npm directory
+        run: cp README.md npm/README.md
+
       - name: Pack npm package
         run: |
           cd npm
