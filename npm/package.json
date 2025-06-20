@@ -3,15 +3,25 @@
     "version": "1.0.0",
     "description": "Nx custom remote cache server backed by Redis",
     "bin": {
-      "nx-custom-cache": "./index.js"
+        "nx-custom-cache": "./index.js"
     },
     "scripts": {
-      "start": "node index.js"
+        "start": "node index.js"
     },
     "files": [
         "index.js",
         "bin/"
-      ],
+    ],
     "author": "Ambros Morscher",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/amorscher/nx-remote-cache.git"
+    },
+    "homepage": "https://github.com/amorscher/nx-remote-cache#readme",
+    "keywords": [
+        "nx",
+        "nx-custom-cache",
+        "redis"
+    ],
     "license": "MIT"
-  }
+}
