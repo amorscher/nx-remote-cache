@@ -114,13 +114,53 @@ jobs:
           chmod +x ./npm/bin/linux/nx-cache-server || true
           chmod +x ./npm/bin/mac/nx-cache-server || true
 
+      - name: Copy README.md to npm directory
+        run: cp README.md npm/README.md
+
       - name: Pack npm package
         run: |
           cd npm
           npm pack
+
+      - name: Install dependencies
+        run: |
+          cd npm
+          npm install
 
       - name: Archive npm package
         uses: actions/upload-artifact@v4
         with:
           name: npm-package
           path: npm/*.tgz
+
+  publish:
+    needs: package-npm
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' # Only run on master branch
+    steps:
+      - name: Download npm package artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: npm-package
+          path: ./npm-package
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd npm-package
+          PACKAGE_NAME=$(ls *.tgz)
+          echo "Publishing $PACKAGE_NAME to npm..."
+          npm publish $PACKAGE_NAME
+
+      - name: Create Git tag
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
