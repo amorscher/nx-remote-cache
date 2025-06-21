@@ -136,7 +136,7 @@ jobs:
   publish:
     needs: package-npm
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' # Only run on master branch
+    if: github.ref == 'refs/heads/main' # Only run on main branch
     steps:
       - name: Download npm package artifact
         uses: actions/download-artifact@v3
