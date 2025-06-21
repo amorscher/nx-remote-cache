@@ -1,6 +1,6 @@
 {
     "name": "nx-custom-cache",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "Nx custom remote cache server backed by Redis",
     "bin": {
         "nx-custom-cache": "./index.js"

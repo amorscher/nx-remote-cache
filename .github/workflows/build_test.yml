@@ -136,10 +136,13 @@ jobs:
   publish:
     needs: package-npm
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' # Only run on master branch
+    if: github.ref == 'refs/heads/main' # Only run on main branch
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Download npm package artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: npm-package
           path: ./npm-package
@@ -150,7 +153,19 @@ jobs:
           node-version: 18
           registry-url: https://registry.npmjs.org/
 
+      - name: Check commit message
+        id: check_commit
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MESSAGE"
+          if [[ "$COMMIT_MESSAGE" =~ ^chore\(release\): ]]; then
+            echo "release=true" >> $GITHUB_ENV
+          else
+            echo "release=false" >> $GITHUB_ENV
+          fi
+      
       - name: Publish to npm
+        if: env.release == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -160,7 +175,8 @@ jobs:
           npm publish $PACKAGE_NAME
 
       - name: Create Git tag
+        if: env.release == 'true'
         run: |
-          VERSION=$(node -p "require('./package.json').version")
+          VERSION=$(node -p "require('./npm/package.json').version")
           git tag "v$VERSION"
           git push origin "v$VERSION"
