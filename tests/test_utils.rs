@@ -4,7 +4,7 @@ use std::{
 };
 
 use axum::Router;
-use nx_remote_cache::{
+use nx_redis_cache::{
     api::{create_router, AppState},
     remote_cache_redis::RedisFileCache,
 };
