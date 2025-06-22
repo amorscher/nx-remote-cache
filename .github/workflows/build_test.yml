@@ -133,13 +133,15 @@ jobs:
           name: npm-package
           path: npm/*.tgz
       
-      - name: Create Git tag (if release)
+      - name: Create Git tag (if on main and release commit)
+        if: github.ref == 'refs/heads/main'
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           if [[ "$COMMIT_MESSAGE" =~ ^chore\(release\): ]]; then
             VERSION=$(node -p "require('./npm/package.json').version")
+            echo "Creating tag v$VERSION for release..."
             git config --global user.name "github-actions[bot]"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
             git tag "v$VERSION"
@@ -149,4 +151,3 @@ jobs:
             echo "Not a release commit. Skipping tag."
           fi
 
- 
