@@ -8,7 +8,7 @@ You can use the cache by installing an npm package to your nx workspace. The pac
 
 1. Installing the server and the cli
     ```shell
-    npm install nx-custom-cache@latest
+    npm install nx-redis-cache@latest
     ```
 2. Starting the Server
     
