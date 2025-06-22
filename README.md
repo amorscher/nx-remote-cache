@@ -14,7 +14,7 @@ You can use the cache by installing an npm package to your nx workspace. The pac
     
     You have to specify a remote redis url env variable to a running redis instance. The example uses a locally running instance. For testing you can use a local redis db by using a docker container. See the [start-local-redis](scripts/start-local-redis.sh) script for details.
     ```shell
-    env REDIS_URL=http://127.0.0.1:3000 npx nx-redis-cache start --verbose
+    env REDIS_URL=redis://localhost:6379 npx nx-redis-cache start --verbose
     ```
 
 3. Using the server in an nx workspace
