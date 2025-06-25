@@ -23,7 +23,7 @@ pub struct AppState {
 pub fn create_router(state: AppState) -> Router {
     Router::new()
         .route("/v1/cache/{hash}", get(get_cache).put(put_cache))
-        .route("stats/run/{taskName}", post(create_run).delete(stop_run))
+        .route("/stats/run/{task_name}", post(create_run).delete(stop_run))
         .layer(AddAuthorizationLayer::bearer("your-secret-token"))
         .with_state(state)
 }
