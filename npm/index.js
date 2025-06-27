@@ -114,7 +114,7 @@ if (command === "start") {
     const proc = spawn(binPath, args, {
     
         detached: true,
-        stdio: "inherit",
+        stdio: 'ignore',
         env:env,
         
     });
@@ -176,10 +176,12 @@ if (command === "start") {
       const raw = fs.readFileSync(runJsonPath, "utf8");
       const data = JSON.parse(raw);
 
-      //create a valid name according to the data
-      jsonOutPath = data.command.replaceAll(" ","_");  
+   
   
       const stats = computeStats(data);
+      
+      //create a valid name according to the data
+      jsonOutPath = `${stats.command.replaceAll(" ","_")}.json`;  
   
       if (wantJson) {
         // If there is an argument immediately after --json and it does not start with "--", treat it as filename
@@ -198,6 +200,6 @@ if (command === "start") {
       process.exit(1);
     }
   } else {
-    console.log("Usage: node index.js <start|stop|cache-stats> [args]\n\n  cache-stats options:\n    [path]           Path to run.json (default ./run.json)\n    --json [file]    Also emit stats as JSON (default ./cache-stats.json)\n  ");
+    console.log("Usage: node index.js <start|stop|cache-stats> [args]\n\n  cache-stats options:\n    [path]           Path to run.json (default ./.nx/run.json)\n    --json [file]    Also emit stats as JSON (default ./[nx-command]json)\n  ");
     process.exit(1);
   }
