@@ -71,7 +71,7 @@ fn internal_error_response(err: impl std::fmt::Debug) -> impl IntoResponse {
     let mut headers = HeaderMap::new();
     headers.insert(header::CONTENT_TYPE, "text/plain".parse().unwrap());
 
-    let body = format!("Internal Server Error {:#?}", err);
+    let body = format!("Internal Server Error {err:#?}");
     (StatusCode::INTERNAL_SERVER_ERROR, headers, Body::from(body))
 }
 
