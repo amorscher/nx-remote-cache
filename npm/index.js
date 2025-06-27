@@ -114,8 +114,7 @@ if (command === "start") {
     const proc = spawn(binPath, args, {
     
         detached: true,
-        stdio: ["ignore", process.stdout, process.stderr],
-        //stdio: "inherit",
+        stdio: "inherit",
         env:env,
         
     });
