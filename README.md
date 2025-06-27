@@ -42,5 +42,8 @@ npx nx-redis-cache stop
 
 ## Capture additional stats
 
-
-
+You can use 
+```shell
+npx nx-redis-cache cache-stats
+```
+to print some stats about the last run of a command. It uses the nx generate run.json file in your local cache directory
