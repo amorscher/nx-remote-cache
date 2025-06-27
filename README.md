@@ -40,5 +40,7 @@ npx nx-redis-cache stop
 | `REDIS_URL`                          | Redis connection URL (e.g., `redis://localhost:6379`)             |
 
 
+## Capture additional stats
+
 
 

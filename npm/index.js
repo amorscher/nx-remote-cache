@@ -156,10 +156,7 @@ if (command === "start") {
     const jsonFlagIdx = rawArgs.indexOf("--json");
     if (jsonFlagIdx !== -1) {
       wantJson = true;
-      // If there is an argument immediately after --json and it does not start with "--", treat it as filename
-      if (rawArgs[jsonFlagIdx + 1] && !rawArgs[jsonFlagIdx + 1].startsWith("--")) {
-        jsonOutPath = rawArgs[jsonFlagIdx + 1];
-      }
+
       // Remove the flag and optional filename from rawArgs to leave only the run.json path (if any)
       rawArgs.splice(jsonFlagIdx, 1); // remove --json
       if (jsonFlagIdx < rawArgs.length && !rawArgs[jsonFlagIdx].startsWith("--")) {
@@ -179,16 +176,23 @@ if (command === "start") {
     try {
       const raw = fs.readFileSync(runJsonPath, "utf8");
       const data = JSON.parse(raw);
+
+      //create a valid name according to the data
+      jsonOutPath = data.command.replaceAll(" ","_");  
   
       const stats = computeStats(data);
   
-      printStats(stats);
-  
       if (wantJson) {
+        // If there is an argument immediately after --json and it does not start with "--", treat it as filename
+        if (rawArgs[jsonFlagIdx + 1] && !rawArgs[jsonFlagIdx + 1].startsWith("--")) {
+            jsonOutPath = rawArgs[jsonFlagIdx + 1];
+          }
         const outPath = path.resolve(jsonOutPath);
         ensureDir(outPath);
         fs.writeFileSync(outPath, JSON.stringify(stats, null, 2));
         console.log(`\nStats written to ${outPath}`);
+      }else{
+        printStats(stats);
       }
     } catch (err) {
       console.error(`Failed to read or parse \"${runJsonPath}\":`, err.message);
