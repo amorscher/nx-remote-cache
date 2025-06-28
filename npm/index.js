@@ -38,13 +38,13 @@ function computeStats(data) {
     for (const t of tasks) {
       switch (t.cacheStatus) {
         case "local-cache-hit":
-          buckets.local.push(t.taskId);
+          buckets.local.push({taskId:t.taskId, hash:t.hash});
           break;
         case "remote-cache-hit":
-          buckets.remote.push(t.taskId);
+          buckets.remote.push({taskId:t.taskId, hash:t.hash});
           break;
         default:
-          buckets.none.push(t.taskId);
+          buckets.none.push({taskId:t.taskId, hash:t.hash});
       }
     }
   
@@ -76,10 +76,10 @@ function computeStats(data) {
     console.log(`None              : ${stats.noCache.length}`);
     console.log();
   
-    const printIdList = (title, ids) => {
-      if (!ids.length) return;
+    const printIdList = (title, tasks) => {
+      if (!tasks.length) return;
       console.log(title);
-      for (const id of ids) console.log(`  • ${id}`);
+      for (const task of tasks) console.log(`  • ${task.taskId} (${task.hash})`);
       console.log();
     };
   
