@@ -5,7 +5,7 @@ use axum::{
     extract::{Path, State},
     http::{header, HeaderMap, Request, StatusCode},
     response::{IntoResponse, Response},
-    routing::get,
+    routing::{get, post},
     Router,
 };
 use tower_http::auth::AddAuthorizationLayer;
@@ -23,8 +23,21 @@ pub struct AppState {
 pub fn create_router(state: AppState) -> Router {
     Router::new()
         .route("/v1/cache/{hash}", get(get_cache).put(put_cache))
+        .route("/stats/run/{task_name}", post(create_run).delete(stop_run))
         .layer(AddAuthorizationLayer::bearer("your-secret-token"))
         .with_state(state)
+}
+
+async fn create_run(Path(task_name): Path<String>, State(_state): State<AppState>) -> Response {
+    logt!(debug, "create task run {}", task_name);
+
+    (StatusCode::OK,).into_response()
+}
+
+async fn stop_run(Path(task_name): Path<String>, State(_state): State<AppState>) -> Response {
+    logt!(debug, "stop task run {}", task_name);
+
+    (StatusCode::OK,).into_response()
 }
 
 async fn get_cache(Path(hash): Path<String>, State(state): State<AppState>) -> Response {
@@ -58,7 +71,7 @@ fn internal_error_response(err: impl std::fmt::Debug) -> impl IntoResponse {
     let mut headers = HeaderMap::new();
     headers.insert(header::CONTENT_TYPE, "text/plain".parse().unwrap());
 
-    let body = format!("Internal Server Error {:#?}", err);
+    let body = format!("Internal Server Error {err:#?}");
     (StatusCode::INTERNAL_SERVER_ERROR, headers, Body::from(body))
 }
 
