@@ -3,13 +3,17 @@
     "version": "0.0.4",
     "description": "Nx custom remote cache server backed by Redis",
     "bin": {
-        "nx-redis-cache": "./index.js"
+        "nx-redis-cache": "./dist/cli.js"
     },
     "scripts": {
-        "start": "node index.js"
+        "build:js": "esbuild src/cli.ts --bundle --platform=node --target=node20 --outfile=dist/cli.js --sourcemap --banner:js=\"#!/usr/bin/env node\"",
+        "build:types": "tsc --emitDeclarationOnly",
+        "build": "npm run build:js && npm run build:types",
+        "dev": "tsx watch src/cli.ts",
+        "typecheck": "tsc --noEmit"
     },
     "files": [
-        "index.js",
+        "dist/",
         "bin/"
     ],
     "author": "Ambros Morscher",
@@ -23,5 +27,14 @@
         "nx-custom-cache",
         "redis"
     ],
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "@types/yargs": "^17.0.33",
+        "yargs": "^18.0.0"
+    },
+    "devDependencies": {
+        "esbuild": "^0.25.5",
+        "tsx": "^4.20.3",
+        "typescript": "^5.8.3"
+    }
 }
