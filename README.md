@@ -33,7 +33,7 @@ env NX_SELF_HOSTED_REMOTE_CACHE_SERVER=http://127.0.0.1:3000 npx nx run-many -t=
 npx nx-redis-cache stop
 ```
 
-## Supported env variables
+## 🌐Supported env variables
 
 | Variable                             | Description                                                       |
 | ------------------------------------ | ----------------------------------------------------------------- |

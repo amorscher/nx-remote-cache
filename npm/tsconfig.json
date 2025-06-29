@@ -9,7 +9,6 @@
       "moduleResolution": "node16",    // “imports” + “exports” field awareness
       "resolvePackageJsonExports": true,
       "allowImportingTsExtensions": false,
-      "verbatimModuleSyntax": true,    // surfaces accidental CJS/ESM mixing
   
       /* -------------------------------------------------------
        *  Type‑safety – ALL strictness flags

@@ -33,6 +33,7 @@
         "yargs": "^18.0.0"
     },
     "devDependencies": {
+        "@types/node": "^24.0.7",
         "esbuild": "^0.25.5",
         "tsx": "^4.20.3",
         "typescript": "^5.8.3"
