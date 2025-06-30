@@ -1,2 +1,15 @@
+# compiled output
 /target
 /npm/bin
+dist/
+
+# build files
+.tsbuildinfo
+
+#deps
+node_modules/
+
+#logs
+*.log
+
+
