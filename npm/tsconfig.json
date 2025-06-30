@@ -5,9 +5,8 @@
        *  Emit target & module system
        * ----------------------------------------------------- */
       "target": "ES2022",              // modern JS features, still Node‑LTS‑safe
-      "module": "node16",              // defer bundling (keeps `import`/`export`)
-      "moduleResolution": "node16",    // “imports” + “exports” field awareness
-      "resolvePackageJsonExports": true,
+      "module": "nodenext",
+      "moduleResolution": "nodenext",
       "allowImportingTsExtensions": false,
   
       /* -------------------------------------------------------
@@ -38,7 +37,8 @@
       "noUnusedParameters": true,
       "noEmitOnError": true,           // fail builds loudly
       "checkJs": true,                 // surface errors in stray .js files too
-      "allowJs": true,                 // …but let them exist
+      "allowJs": true,  
+                     // …but let them exist
   
       /* -------------------------------------------------------
        *  Build robustness
@@ -60,8 +60,8 @@
       /* -------------------------------------------------------
        *  Interop & optimisation
        * ----------------------------------------------------- */
-      "esModuleInterop": false,        // prefer native `import` semantics
-      "allowSyntheticDefaultImports": false,
+      "esModuleInterop": true,        // prefer native `import` semantics
+      "allowSyntheticDefaultImports": true,
       "isolatedModules": true,         // required for SWC/esbuild/Vite “transpile‑only”
     },
   
