@@ -14,10 +14,11 @@ const binPath = (() => {
     if (platform === "darwin")
         return path.join(__dirname, "bin", "mac", "nx-cache-server");
     throw new Error(`Unsupported platform: ${platform}`);
-})();
+});
 
 export function start(verbose: boolean,pidFilePath = PID_FILE){
 
+        const execPath = binPath();
         if (existsSync(pidFilePath)) {
             console.error("Server is already running.");
             process.exit(1);
@@ -29,7 +30,7 @@ export function start(verbose: boolean,pidFilePath = PID_FILE){
             env.RUST_LOG = "trace";
         }
     
-        const proc = spawn(binPath, {       
+        const proc = spawn(execPath, {       
             detached: true,
             stdio: 'ignore',
             env:env,
