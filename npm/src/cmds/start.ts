@@ -8,11 +8,11 @@ export const PID_FILE = path.join(__dirname, "nx-cache-server.pid");
 const binPath = (() => {
     const platform = os.platform();
     if (platform === "win32")
-        return path.join(__dirname, "bin", "win", "nx-cache-server.exe");
+        return path.join(__dirname, "..","..","bin", "win", "nx-cache-server.exe");
     if (platform === "linux")
-        return path.join(__dirname, "bin", "linux", "nx-cache-server");
+        return path.join(__dirname, "..","..","bin", "linux", "nx-cache-server");
     if (platform === "darwin")
-        return path.join(__dirname, "bin", "mac", "nx-cache-server");
+        return path.join(__dirname, "..","..","bin", "mac", "nx-cache-server");
     throw new Error(`Unsupported platform: ${platform}`);
 });
 
