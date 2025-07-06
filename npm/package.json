@@ -3,7 +3,7 @@
     "version": "0.0.4",
     "description": "Nx custom remote cache server backed by Redis",
     "bin": {
-        "nx-redis-cache": "./dist/cli.js"
+        "nx-redis-cache": "./exec/run.js"
     },
     "scripts": {
         "build:js": "tsc",
@@ -17,7 +17,8 @@
     },
     "files": [
         "dist/",
-        "bin/"
+        "bin/",
+        "exec/"
     ],
     "author": "Ambros Morscher",
     "repository": {
