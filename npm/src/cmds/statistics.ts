@@ -6,7 +6,7 @@ import { NxRunSummary } from "./nx.types";
 
 export const RUN_JSON_DEFAULT = path.join(".", ".nx", "cache", "run.json");
 
-export function statistics(runJsonPath: string = RUN_JSON_DEFAULT, jsonOutConfig?: {providedFileName?:string}): void {
+export function statistics(runJsonPath: string = RUN_JSON_DEFAULT, jsonOutConfig?: { providedFileName?: string }): void {
     if (!existsSync(runJsonPath)) {
         console.error(`Could not find run.json at \"${runJsonPath}\".`);
         process.exit(1);
@@ -20,7 +20,7 @@ export function statistics(runJsonPath: string = RUN_JSON_DEFAULT, jsonOutConfig
 
         const stats = computeStats(data);
 
-        
+
         if (jsonOutConfig !== undefined) {
             //create a valid name according to the data
             const realOutputPath = jsonOutConfig?.providedFileName ?? `${stats.command.replaceAll(" ", "_")}.json`;
@@ -57,7 +57,7 @@ interface NxCacheTask {
  * Compute statistics for a Nx run.json input.
  * @param {{run: any, tasks: any[]}} data
  */
-function computeStats(data:NxRunSummary): NxCacheStats {
+function computeStats(data: NxRunSummary): NxCacheStats {
     const runCommand = data?.run?.command ?? "<unknown>";
     const tasks = Array.isArray(data?.tasks) ? data.tasks : [];
 
@@ -97,7 +97,7 @@ function computeStats(data:NxRunSummary): NxCacheStats {
  * Pretty‑prints cache statistics to stdout.
  * @param {ReturnType<typeof computeStats>} stats
  */
-function printStats(stats:NxCacheStats): void {
+function printStats(stats: NxCacheStats): void {
     console.log();
     console.log("NX Cache Statistics");
     console.log("───────────────────────");
