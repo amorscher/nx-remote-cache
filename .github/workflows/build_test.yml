@@ -117,11 +117,6 @@ jobs:
       - name: Copy README.md to npm directory
         run: cp README.md npm/README.md
 
-      - name: Pack npm package
-        run: |
-          cd npm
-          npm pack
-
       - name: Install dependencies
         run: |
           cd npm
@@ -136,6 +131,11 @@ jobs:
         run: |
           cd npm
           npm run build
+
+      - name: Pack npm package
+        run: |
+          cd npm
+          npm pack
 
       - name: Archive npm package
         uses: actions/upload-artifact@v4
