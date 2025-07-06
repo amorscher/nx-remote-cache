@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, unlinkSync } from "fs";
-import { PID_FILE } from "./start.js";
+import { PID_FILE } from "./start";
 
 export function stop(pidFilePath = PID_FILE):void{
 
