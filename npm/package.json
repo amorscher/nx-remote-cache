@@ -1,6 +1,6 @@
 {
     "name": "nx-redis-cache",
-    "version": "0.0.4",
+    "version": "1.0.0",
     "description": "Nx custom remote cache server backed by Redis",
     "bin": {
         "nx-redis-cache": "./exec/run.js"
